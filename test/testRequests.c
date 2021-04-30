@@ -2,19 +2,7 @@
 #include "unity.h"
 
 
-/*
-
-Potential tests:
-- requests_above and below  - DONE
-- requests_chooseDirection - DONE
-- requests_shouldStop
-- requests_clearAtCurrentFloor
-
-*/
-
-
 Elevator elev;
-
 void setUp(void) {
     // Initialize a elevator on 3nd floor standing still without orders
     elev.floor = 3;
@@ -100,7 +88,7 @@ void test_requests_chooseDirection(void) {
     elev.behaviour = EB_Moving;
     elev.requests[2][0] = 1;
     Dirn dir = requests_chooseDirection(elev);
-    TEST_ASSERT_EQUAL(1,  dir);
+    TEST_ASSERT_EQUAL(D_Up,  dir);
 
     // Scenario 2:
     elev.floor = 1;
@@ -109,7 +97,7 @@ void test_requests_chooseDirection(void) {
     elev.requests[2][0] = 0;
     elev.requests[0][0] = 1;
     dir = requests_chooseDirection(elev);
-    TEST_ASSERT_EQUAL(-1,  dir);
+    TEST_ASSERT_EQUAL(D_Down,  dir);
 
     // Scenario 3:
     elev.floor = 1;
@@ -118,7 +106,7 @@ void test_requests_chooseDirection(void) {
     elev.requests[1][0] = 1;
     elev.requests[0][0] = 0;
     dir = requests_chooseDirection(elev);
-    TEST_ASSERT_EQUAL(0,  dir);
+    TEST_ASSERT_EQUAL(D_Stop,  dir);
 
 }
 
@@ -137,26 +125,131 @@ void test_requests_shouldStop() {
         Scenario 3: On the way up w order - True
         Scenario 4: On the way uo w/o order - False
     */
-    
+
+    int shouldStop = 0;
+
+    // Scenario 1:
+    elev.floor = 2;
+    elev.dirn = D_Down;
+    elev.behaviour = EB_Moving;
+    elev.requests[2][0] = 1;
+    shouldStop = requests_shouldStop(elev);
+    TEST_ASSERT_EQUAL(1,  shouldStop);
+
+    // Scenario 2:
+    elev.floor = 2;
+    elev.dirn = D_Down;
+    elev.behaviour = EB_Moving;
+    elev.requests[2][0] = 0;
+    elev.requests[1][0] = 1;
+    shouldStop = requests_shouldStop(elev);
+    TEST_ASSERT_EQUAL(0,  shouldStop);
+
+    // Scenario 3:
+    elev.floor = 1;
+    elev.dirn = D_Up;
+    elev.behaviour = EB_Moving;
+    elev.requests[1][0] = 1;
+    shouldStop = requests_shouldStop(elev);
+    TEST_ASSERT_EQUAL(1,  shouldStop);
+
+    // Scenario 3:
+    elev.floor = 1;
+    elev.dirn = D_Up;
+    elev.behaviour = EB_Moving;
+    elev.requests[1][0] = 0;
+    elev.requests[2][0] = 1;
+    shouldStop = requests_shouldStop(elev);
+    TEST_ASSERT_EQUAL(0,  shouldStop);
+
+}
+
+void test_requests_clearAtCurrentFloor() {
+  /*
+    When this function is called, it removes
+    all orders on the floor the elevator currently
+    is at.
+
+    Scenario 1: Elevator only has orders on current
+    floor, should return empty queue.
+
+    Scenario 2: Elevator has orders on all floors,
+    should only remove orders from current floor.
+
+    Scenario 3: Elevator has orders on all floors
+    except current floor. Should not remove anything.
+
+  */
+
+  // Create a expected output queue
+  int expected_queue[N_FLOORS][N_BUTTONS];
+  for(Button btn = 0; btn < N_BUTTONS; btn++){
+    for(int floor = 0; floor < N_FLOORS; floor++){
+        expected_queue[floor][btn] = 0;
+    }
+  }
 
 
+
+  // Scenario 1:
+  elev.floor                   = 2;
+  elev.requests[2][0]          = 1;
+  elev = requests_clearAtCurrentFloor(elev);
+  expected_queue[elev.floor][0] = 0;
+  for(Button btn = 0; btn < N_BUTTONS; btn++){
+    for(int floor = 0; floor < N_FLOORS; floor++){
+        TEST_ASSERT_EQUAL(expected_queue[floor][btn],elev.requests[floor][btn]);
+    }
+  }
+
+
+  // Scenario 2:
+  for(Button btn = 0; btn < N_BUTTONS; btn++){
+    for(int floor = 0; floor < N_FLOORS; floor++){
+        elev.requests[floor][btn] = 1;
+        if(floor != elev.floor) {
+          expected_queue[floor][btn] = 1;
+        }
+    }
+  }
+  elev = requests_clearAtCurrentFloor(elev);
+  for(Button btn = 0; btn < N_BUTTONS; btn++){
+    for(int floor = 0; floor < N_FLOORS; floor++){
+        TEST_ASSERT_EQUAL(expected_queue[floor][btn],elev.requests[floor][btn]);
+    }
+  }
+
+  // Scenario 3:
+  for(Button btn = 0; btn < N_BUTTONS; btn++){
+    for(int floor = 0; floor < N_FLOORS; floor++){
+
+        if(floor != elev.floor) {
+          expected_queue[floor][btn] = 1;
+          elev.requests[floor][btn] = 1;
+        }else{
+          expected_queue[floor][btn] = 0;
+          elev.requests[floor][btn] = 0;
+        }
+    }
+  }
+  elev = requests_clearAtCurrentFloor(elev);
+  for(Button btn = 0; btn < N_BUTTONS; btn++){
+    for(int floor = 0; floor < N_FLOORS; floor++){
+        TEST_ASSERT_EQUAL(expected_queue[floor][btn],elev.requests[floor][btn]);
+    }
+  }
 
 }
 
 
-
-void test_function_should_doAlsoDoBlah(void) {
-    //more test stuff
-}
-
-// not needed when using generate_test_runner.rb
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_requests_above);
     RUN_TEST(test_requests_below);
     RUN_TEST(test_requests_chooseDirection);
+    RUN_TEST(test_requests_shouldStop);
+    RUN_TEST(test_requests_clearAtCurrentFloor);
 
-    //RUN_TEST(test_requests_chooseDirection);
 
     return UNITY_END();
 }
