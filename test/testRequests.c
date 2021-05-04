@@ -173,10 +173,10 @@ void test_requests_clearAtCurrentFloor() {
 
   // Scenario 1:
   elev.floor = 2; // Set current floor and add orders above and below
-  elev.requests[3][B_HallUp] = elev.requests[2][0] = elev.requests[1][1] = 1;
-  expected_queue[3][B_HallUp] = expected_queue[1][1] = 1;
+  elev.requests[3][B_HallUp] = elev.requests[2][B_HallUp] = elev.requests[1][B_HallDown] = 1;
+  expected_queue[3][B_HallUp] = expected_queue[1][B_HallDown] = 1;
   elev = requests_clearAtCurrentFloor(elev);
-  expected_queue[elev.floor][0] = 0; // Clear current floor in expected queue
+  expected_queue[elev.floor][B_HallUp] = 0; // Clear current floor in expected queue
   // Iterate through all orders and see that the queues are the same
   for(Button btn = 0; btn < N_BUTTONS; btn++){
     for(int floor = 0; floor < N_FLOORS; floor++){

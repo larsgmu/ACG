@@ -42,13 +42,13 @@ void test_fsm_onRequestButtonPress(void) {
   // Scenario 2: Check that request gets added to matrix
   elevator.requests[2][B_HallDown] = 0; // Make sure no orders
   fsm_onRequestButtonPress(2, B_HallDown);
-  TEST_ASSERT_EQUAL(1, elevator.requests[2][1]);
+  TEST_ASSERT_EQUAL(1, elevator.requests[2][B_HallDown]);
 
   // Scenario 3: Check that request gets added to matrix
   elevator.behaviour = EB_Moving;
   elevator.requests[2][B_HallDown] = 0; // Make sure no orders
   fsm_onRequestButtonPress(2, B_HallDown);
-  TEST_ASSERT_EQUAL(1, elevator.requests[2][1]);
+  TEST_ASSERT_EQUAL(1, elevator.requests[2][B_HallDown]);
 
   // Scenario 4: Should start  timer and set the behaviour EBDoorOpen
   elevator.behaviour = EB_Idle;
@@ -63,7 +63,7 @@ void test_fsm_onRequestButtonPress(void) {
   elevator.floor          = 1;
   elevator.requests[2][B_HallDown] = 0;
   fsm_onRequestButtonPress(2, B_HallDown);
-  TEST_ASSERT_EQUAL(1, elevator.requests[2][1]);
+  TEST_ASSERT_EQUAL(1, elevator.requests[2][B_HallDown]);
   TEST_ASSERT_EQUAL(D_Up, elevator.dirn);
   TEST_ASSERT_EQUAL(EB_Moving, elevator.behaviour);
 
