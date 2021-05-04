@@ -61,5 +61,39 @@ void test_fsm_onRequestButtonPress(void) {
 
 }
 
-void test_fsm_onFloorArrival(void) {}
+void test_fsm_onFloorArrival(void) {
+  /*
+    This function desides what happens to the elevator
+    when it arrives to a new floor. It's all based on the
+    state of the elevator.
+
+    The scenarios are from the truth table, where scenario 1
+    is the leftmos column.
+  */
+
+  // Scenario 1:
+  elevator.behaviour = EB_Idle;
+  elevator.floor = 1;
+  fsm_onFloorArrival(2);
+  TEST_ASSERT_EQUAL(2, elevator.floor);
+
+  // Scenario 2:
+  elevator.behaviour = EB_Moving;
+  elevator.dirn = D_Up; // Set up s.t. shouldStop() returns 0
+  elevator.floor = 1;
+  elevator.requests[3][B_HallUp] = 1;
+  fsm_onFloorArrival(2);
+  TEST_ASSERT_EQUAL(2, elevator.floor);
+
+  // Scenario 3
+  elevator.behaviour = EB_Moving;
+  elevator.dirn = D_Up; // Set up s.t. shouldStop() returns 1
+  elevator.floor = 1;
+  elevator.requests[2][B_HallUp] = 1;
+  fsm_onFloorArrival(2);
+  TEST_ASSERT_EQUAL(2, elevator.floor);
+  TEST_ASSERT_EQUAL(0, elevator.requests[2][B_HallUp]);
+  TEST_ASSERT_EQUAL(EB_DoorOpen, elevator.behaviour);
+  TEST_ASSERT_EQUAL(1, timerActive);
+}
 void test_fsm_onDoorTimeout(void) {}
