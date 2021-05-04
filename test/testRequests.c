@@ -54,60 +54,42 @@ void test_requests_below(void) {
 void test_requests_chooseDirection(void) {
     /*
 
-    Idea: Draw scenario in latex?
-
     requests_chooseDirection decides if the elevator
     should continue with the direction it's currently
     in, or change it's direction to stop or the opposite.
     The function is called everytime the elevator
     is at a new floor.
 
-    Scenario 1: Continue same direction
-    - On the move upwards from floor 0
-    - Has a order in floor 3
-    - Function is called at floor 1
-    - Expected return is direction up i.e. D_Up
-
-    Scenario 2: Change direction
-    - On the move upwards from floor 0
-    - Has a order in florr 0
-    - Function is called at floor 1
-    - Expected return is down
-
-    Scenario 3: Stop
-    - On the move upwards from floor 0
-    - Has a order on floor 1
-    - Function is called when elevator enter floor 1
-    - Expected return is stop.
-
+    Five scenarios based on the truth table, where scenario 1
+    represent the leftmost column.
     */
 
     // Scenario 1:
-    elev.floor = 1;
-    elev.dirn = D_Up;
-    elev.behaviour = EB_Moving;
-    elev.requests[2][0] = 1;
-    Dirn dir = requests_chooseDirection(elev);
+    elev.floor = 1; elev.dirn = D_Up; elev.behaviour = EB_Moving;
+    elev.requests[2][0] = 1; Dirn dir = requests_chooseDirection(elev);
     TEST_ASSERT_EQUAL(D_Up,  dir);
 
     // Scenario 2:
-    elev.floor = 1;
-    elev.dirn = D_Up;
-    elev.behaviour = EB_Moving;
+    elev.floor = 1; elev.dirn = D_Up; elev.behaviour = EB_Moving;
     elev.requests[2][0] = 0;
-    elev.requests[0][0] = 1;
-    dir = requests_chooseDirection(elev);
+    elev.requests[0][0] = 1; dir = requests_chooseDirection(elev);
     TEST_ASSERT_EQUAL(D_Down,  dir);
 
     // Scenario 3:
-    elev.floor = 1;
-    elev.dirn = D_Up;
-    elev.behaviour = EB_Moving;
-    elev.requests[1][0] = 1;
-    elev.requests[0][0] = 0;
-    dir = requests_chooseDirection(elev);
-    TEST_ASSERT_EQUAL(D_Stop,  dir);
+    elev.floor = 1; elev.dirn = D_Down; elev.behaviour = EB_Moving;
+    elev.requests[0][0] = 1; dir = requests_chooseDirection(elev);
+    TEST_ASSERT_EQUAL(D_Down,  dir);
 
+    // Scenario 4:
+    elev.floor = 1; elev.dirn = D_Down; elev.behaviour = EB_Moving;
+    elev.requests[0][0] = 0;
+    elev.requests[2][0] = 1; dir = requests_chooseDirection(elev);
+    TEST_ASSERT_EQUAL(D_Up,  dir);
+
+    // Scenario 5:
+    elev.floor = 1; elev.dirn = D_Down; elev.behaviour = EB_Moving;
+    elev.requests[2][0] = 0; dir = requests_chooseDirection(elev);
+    TEST_ASSERT_EQUAL(D_Stop,  dir);
 }
 
 void test_requests_shouldStop() {
@@ -117,13 +99,9 @@ void test_requests_shouldStop() {
         elevator when it passes a floor says it's
         reasonable to stop.
 
-        Scenario 1: on the way down and has order
-        on passing floor - True
-        Scenario 2: Same but without order on
-        passing floor - False
+        Eight scenarios based on the truth table, where scenario 1
+        represent the leftmost column.
 
-        Scenario 3: On the way up w order - True
-        Scenario 4: On the way uo w/o order - False
     */
 
     int shouldStop = 0;
@@ -191,18 +169,12 @@ void test_requests_clearAtCurrentFloor() {
     all orders on the floor the elevator currently
     is at.
 
-    Scenario 1: Elevator only has orders on current
-    floor, should return empty queue.
-
-    Scenario 2: Elevator has orders on all floors,
-    should only remove orders from current floor.
-
-    Scenario 3: Elevator has orders on all floors
-    except current floor. Should not remove anything.
-
+    Scenario: Fill the queue with arbitrary orders, both on
+    current floor and on floors above and below. The function
+    should only remove the orders on the current floor.
   */
 
-  // Create a expected output queue
+  // Create a expected output queue with no orders
   int expected_queue[N_FLOORS][N_BUTTONS];
   for(Button btn = 0; btn < N_BUTTONS; btn++){
     for(int floor = 0; floor < N_FLOORS; floor++){
@@ -210,54 +182,18 @@ void test_requests_clearAtCurrentFloor() {
     }
   }
 
-
-
   // Scenario 1:
-  elev.floor                   = 2;
-  elev.requests[2][0]          = 1;
+  elev.floor = 2; // Set current floor and add orders above and below
+  elev.requests[3][0] = elev.requests[2][0] = elev.requests[1][1] = 1;
+  expected_queue[3][0] = expected_queue[1][1] = 1;
   elev = requests_clearAtCurrentFloor(elev);
-  expected_queue[elev.floor][0] = 0;
+  expected_queue[elev.floor][0] = 0; // Clear current floor in expected queue
+  // Iterate through all orders and see that the queues are the same
   for(Button btn = 0; btn < N_BUTTONS; btn++){
     for(int floor = 0; floor < N_FLOORS; floor++){
         TEST_ASSERT_EQUAL(expected_queue[floor][btn],elev.requests[floor][btn]);
     }
   }
 
-
-  // Scenario 2:
-  for(Button btn = 0; btn < N_BUTTONS; btn++){
-    for(int floor = 0; floor < N_FLOORS; floor++){
-        elev.requests[floor][btn] = 1;
-        if(floor != elev.floor) {
-          expected_queue[floor][btn] = 1;
-        }
-    }
-  }
-  elev = requests_clearAtCurrentFloor(elev);
-  for(Button btn = 0; btn < N_BUTTONS; btn++){
-    for(int floor = 0; floor < N_FLOORS; floor++){
-        TEST_ASSERT_EQUAL(expected_queue[floor][btn],elev.requests[floor][btn]);
-    }
-  }
-
-  // Scenario 3:
-  for(Button btn = 0; btn < N_BUTTONS; btn++){
-    for(int floor = 0; floor < N_FLOORS; floor++){
-
-        if(floor != elev.floor) {
-          expected_queue[floor][btn] = 1;
-          elev.requests[floor][btn] = 1;
-        }else{
-          expected_queue[floor][btn] = 0;
-          elev.requests[floor][btn] = 0;
-        }
-    }
-  }
-  elev = requests_clearAtCurrentFloor(elev);
-  for(Button btn = 0; btn < N_BUTTONS; btn++){
-    for(int floor = 0; floor < N_FLOORS; floor++){
-        TEST_ASSERT_EQUAL(expected_queue[floor][btn],elev.requests[floor][btn]);
-    }
-  }
 
 }
