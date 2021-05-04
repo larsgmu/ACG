@@ -128,40 +128,61 @@ void test_requests_shouldStop() {
 
     int shouldStop = 0;
 
+
     // Scenario 1:
-    elev.floor = 2;
-    elev.dirn = D_Down;
-    elev.behaviour = EB_Moving;
-    elev.requests[2][0] = 1;
-    shouldStop = requests_shouldStop(elev);
+    elev.floor = 2; elev.dirn = D_Down; elev.behaviour = EB_Moving;
+    elev.requests[2][1] = 1; shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(1,  shouldStop);
 
     // Scenario 2:
-    elev.floor = 2;
-    elev.dirn = D_Down;
-    elev.behaviour = EB_Moving;
-    elev.requests[2][0] = 0;
-    elev.requests[1][0] = 1;
-    shouldStop = requests_shouldStop(elev);
-    TEST_ASSERT_EQUAL(0,  shouldStop);
-
-    // Scenario 3:
-    elev.floor = 1;
-    elev.dirn = D_Up;
-    elev.behaviour = EB_Moving;
-    elev.requests[1][0] = 1;
-    shouldStop = requests_shouldStop(elev);
+    elev.floor = 2; elev.dirn = D_Down; elev.behaviour = EB_Moving;
+    elev.requests[2][1] = 0; shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(1,  shouldStop);
 
     // Scenario 3:
-    elev.floor = 1;
-    elev.dirn = D_Up;
-    elev.behaviour = EB_Moving;
-    elev.requests[1][0] = 0;
-    elev.requests[2][0] = 1;
-    shouldStop = requests_shouldStop(elev);
+    elev.floor = 2; elev.dirn = D_Down; elev.behaviour = EB_Moving;
+    elev.requests[1][1] = 1; shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(0,  shouldStop);
 
+    // Scenario 4:
+    elev.floor = 2; elev.dirn = D_Up; elev.behaviour = EB_Moving;
+    elev.requests[1][1] = 0; // Reset from previous scenario
+    elev.requests[2][0] = 1; shouldStop = requests_shouldStop(elev);
+    TEST_ASSERT_EQUAL(1,  shouldStop);
+
+    // Scenario 5:
+    elev.floor = 2; elev.dirn = D_Up; elev.behaviour = EB_Moving;
+    elev.requests[2][0] = 0; shouldStop = requests_shouldStop(elev);
+    TEST_ASSERT_EQUAL(1,  shouldStop);
+
+    // Scenario 6:
+    elev.floor = 2; elev.dirn = D_Up; elev.behaviour = EB_Moving;
+    elev.requests[3][1] = 1; shouldStop = requests_shouldStop(elev);
+    TEST_ASSERT_EQUAL(0,  shouldStop);
+
+    // Scenario 7:
+    elev.floor = 2; elev.dirn = D_Up; elev.behaviour = EB_Moving;
+    elev.requests[3][1] = 0; // Reset from previous scenario
+    elev.requests[2][2] = 1; // Cab order on current floor
+    // Looping through all button combinations:
+    for(Button btn = 0; btn < N_BUTTONS; btn++){
+      for(int floor = 0; floor < N_FLOORS; floor++){
+          elev.requests[floor][btn] = 1;
+          shouldStop = requests_shouldStop(elev);
+          TEST_ASSERT_EQUAL(1,  shouldStop);
+      }
+    }
+
+    // Scenario 8:
+    elev.floor = 2; elev.dirn = D_Stop; elev.behaviour = EB_Idle;
+    // Looping through all button combinations:
+    for(Button btn = 0; btn < N_BUTTONS; btn++){
+      for(int floor = 0; floor < N_FLOORS; floor++){
+          elev.requests[floor][btn] = 0;
+          shouldStop = requests_shouldStop(elev);
+          TEST_ASSERT_EQUAL(1,  shouldStop);
+      }
+    }
 }
 
 void test_requests_clearAtCurrentFloor() {
