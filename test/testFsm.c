@@ -5,7 +5,15 @@
 
 extern Elevator elevator;
 extern int timerActive;
-void setUp(void) {}
+void setUp(void) { // This function is run between each test
+  // Remove all requests:
+  for(Button btn = 0; btn < N_BUTTONS; btn++){
+    for(int floor = 0; floor < N_FLOORS; floor++){
+        elevator.requests[floor][btn] = 0;
+    }
+  }
+
+}
 void tearDown(void) {}
 
 void test_fsm_onInitBetweenFloors(void) {
@@ -96,4 +104,24 @@ void test_fsm_onFloorArrival(void) {
   TEST_ASSERT_EQUAL(EB_DoorOpen, elevator.behaviour);
   TEST_ASSERT_EQUAL(1, timerActive);
 }
-void test_fsm_onDoorTimeout(void) {}
+
+void test_fsm_onDoorTimeout(void) {
+  /*
+    This function decides what happens when
+    the timer of the open door is out.
+    The testset is based on the flowchart.
+  */
+
+  // Scenario 1: Door open + stop -> Idle
+  elevator.behaviour = EB_DoorOpen;
+  fsm_onDoorTimeout();
+  TEST_ASSERT_EQUAL(EB_Idle, elevator.behaviour);
+
+  // Scenario 2: Door open + !stop -> Moving
+  elevator.floor = 1;
+  elevator.requests[0][B_Cab] = 1;
+  elevator.behaviour = EB_DoorOpen;
+  fsm_onDoorTimeout();
+  TEST_ASSERT_EQUAL(EB_Moving, elevator.behaviour);
+
+}
