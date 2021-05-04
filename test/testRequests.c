@@ -240,16 +240,3 @@ void test_requests_clearAtCurrentFloor() {
   }
 
 }
-
-
-int main(void) {
-    UNITY_BEGIN();
-    RUN_TEST(test_requests_above);
-    RUN_TEST(test_requests_below);
-    RUN_TEST(test_requests_chooseDirection);
-    RUN_TEST(test_requests_shouldStop);
-    RUN_TEST(test_requests_clearAtCurrentFloor);
-
-
-    return UNITY_END();
-}
