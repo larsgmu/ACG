@@ -31,7 +31,7 @@ void test_requests_above(void) {
 
   elev.floor = 0;
   TEST_ASSERT_EQUAL(0, requests_above(elev));
-  elev.requests[2][1] = 1;
+  elev.requests[2][B_HallDown] = 1;
   TEST_ASSERT_EQUAL(1, requests_above(elev));
 }
 
@@ -47,7 +47,7 @@ void test_requests_below(void) {
 
   elev.floor = 2;
   TEST_ASSERT_EQUAL(0, requests_below(elev));
-  elev.requests[0][1] = 1;
+  elev.requests[0][B_HallDown] = 1;
   TEST_ASSERT_EQUAL(1, requests_below(elev));
 }
 
@@ -66,29 +66,29 @@ void test_requests_chooseDirection(void) {
 
     // Scenario 1:
     elev.floor = 1; elev.dirn = D_Up; elev.behaviour = EB_Moving;
-    elev.requests[2][0] = 1; Dirn dir = requests_chooseDirection(elev);
+    elev.requests[2][B_HallUp] = 1; Dirn dir = requests_chooseDirection(elev);
     TEST_ASSERT_EQUAL(D_Up,  dir);
 
     // Scenario 2:
     elev.floor = 1; elev.dirn = D_Up; elev.behaviour = EB_Moving;
-    elev.requests[2][0] = 0;
-    elev.requests[0][0] = 1; dir = requests_chooseDirection(elev);
+    elev.requests[2][B_HallUp] = 0;
+    elev.requests[0][B_HallUp] = 1; dir = requests_chooseDirection(elev);
     TEST_ASSERT_EQUAL(D_Down,  dir);
 
     // Scenario 3:
     elev.floor = 1; elev.dirn = D_Down; elev.behaviour = EB_Moving;
-    elev.requests[0][0] = 1; dir = requests_chooseDirection(elev);
+    elev.requests[0][B_HallUp] = 1; dir = requests_chooseDirection(elev);
     TEST_ASSERT_EQUAL(D_Down,  dir);
 
     // Scenario 4:
     elev.floor = 1; elev.dirn = D_Down; elev.behaviour = EB_Moving;
-    elev.requests[0][0] = 0;
-    elev.requests[2][0] = 1; dir = requests_chooseDirection(elev);
+    elev.requests[0][B_HallUp] = 0;
+    elev.requests[2][B_HallUp] = 1; dir = requests_chooseDirection(elev);
     TEST_ASSERT_EQUAL(D_Up,  dir);
 
     // Scenario 5:
     elev.floor = 1; elev.dirn = D_Down; elev.behaviour = EB_Moving;
-    elev.requests[2][0] = 0; dir = requests_chooseDirection(elev);
+    elev.requests[2][B_HallUp] = 0; dir = requests_chooseDirection(elev);
     TEST_ASSERT_EQUAL(D_Stop,  dir);
 }
 
@@ -109,39 +109,39 @@ void test_requests_shouldStop() {
 
     // Scenario 1:
     elev.floor = 2; elev.dirn = D_Down; elev.behaviour = EB_Moving;
-    elev.requests[2][1] = 1; shouldStop = requests_shouldStop(elev);
+    elev.requests[2][B_HallDown] = 1; shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(1,  shouldStop);
 
     // Scenario 2:
     elev.floor = 2; elev.dirn = D_Down; elev.behaviour = EB_Moving;
-    elev.requests[2][1] = 0; shouldStop = requests_shouldStop(elev);
+    elev.requests[2][B_HallDown] = 0; shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(1,  shouldStop);
 
     // Scenario 3:
     elev.floor = 2; elev.dirn = D_Down; elev.behaviour = EB_Moving;
-    elev.requests[1][1] = 1; shouldStop = requests_shouldStop(elev);
+    elev.requests[1][B_HallDown] = 1; shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(0,  shouldStop);
 
     // Scenario 4:
     elev.floor = 2; elev.dirn = D_Up; elev.behaviour = EB_Moving;
-    elev.requests[1][1] = 0; // Reset from previous scenario
-    elev.requests[2][0] = 1; shouldStop = requests_shouldStop(elev);
+    elev.requests[1][B_HallDown] = 0; // Reset from previous scenario
+    elev.requests[2][B_HallUp] = 1; shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(1,  shouldStop);
 
     // Scenario 5:
     elev.floor = 2; elev.dirn = D_Up; elev.behaviour = EB_Moving;
-    elev.requests[2][0] = 0; shouldStop = requests_shouldStop(elev);
+    elev.requests[2][B_HallUp] = 0; shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(1,  shouldStop);
 
     // Scenario 6:
     elev.floor = 2; elev.dirn = D_Up; elev.behaviour = EB_Moving;
-    elev.requests[3][1] = 1; shouldStop = requests_shouldStop(elev);
+    elev.requests[3][B_HallDown] = 1; shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(0,  shouldStop);
 
     // Scenario 7:
     elev.floor = 2; elev.dirn = D_Up; elev.behaviour = EB_Moving;
-    elev.requests[3][1] = 0; // Reset from previous scenario
-    elev.requests[2][2] = 1; // Cab order on current floor
+    elev.requests[3][B_HallDown] = 0; // Reset from previous scenario
+    elev.requests[2][B_Cab] = 1; // Cab order on current floor
     shouldStop = requests_shouldStop(elev);
     TEST_ASSERT_EQUAL(1,  shouldStop);
 
@@ -173,8 +173,8 @@ void test_requests_clearAtCurrentFloor() {
 
   // Scenario 1:
   elev.floor = 2; // Set current floor and add orders above and below
-  elev.requests[3][0] = elev.requests[2][0] = elev.requests[1][1] = 1;
-  expected_queue[3][0] = expected_queue[1][1] = 1;
+  elev.requests[3][B_HallUp] = elev.requests[2][0] = elev.requests[1][1] = 1;
+  expected_queue[3][B_HallUp] = expected_queue[1][1] = 1;
   elev = requests_clearAtCurrentFloor(elev);
   expected_queue[elev.floor][0] = 0; // Clear current floor in expected queue
   // Iterate through all orders and see that the queues are the same
