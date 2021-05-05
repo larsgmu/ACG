@@ -2,7 +2,7 @@
 This Project 1 in the course ACG by Knut Vaagnes Eriksen and Lars Gjardar Musaeus.
 
 ### How to use
-The *src/* folder and *unity_scripts/* are needed to run the unity tests. In the *elevator_src/* folder are all the source code and tests for the elevator project, included the compiled tests **testFsm.out**, **testRequests.out** and **testTimer.out**. By running the makefile in *elevator_src/* these executables get recompiled. To run the tests you need to have a instance of the elevator simulator running. To run the simulator we have added it in the folder *simulator/* for both Windows, Linux and OSX. Simply run it from you perferred shell.
+The *src/* folder and *unity_scripts/* are needed by Unity to run the tests. In the *elevator_src/* folder are all the source code and tests for the elevator project, included the compiled tests **testFsm.out**, **testRequests.out** and **testTimer.out**. By running the makefile in *elevator_src/* these executables get recompiled. To run the tests you need to have a instance of the elevator simulator running. To run the simulator we have added it in the folder *simulator/* for both Windows, Linux and OSX. Simply run it from you perferred shell.
 
 
 #### Step by step(mac/linux):
