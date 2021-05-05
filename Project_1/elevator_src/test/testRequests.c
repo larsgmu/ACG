@@ -15,9 +15,7 @@ void setUp(void) {
     }
 }
 
-void tearDown(void) {
-    // clean stuff up here
-}
+void tearDown(void) {}
 
 void test_requests_above(void) {
   /*

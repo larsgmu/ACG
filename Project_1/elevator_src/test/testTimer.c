@@ -2,17 +2,12 @@
 #include "unity.h"
 #include <unistd.h>
 
-
 extern double timerEndTime;
 extern int timerActive;
 
-void setUp(void) {
+void setUp(void) {}
 
-}
-
-void tearDown(void) {
-
-}
+void tearDown(void) {}
 
 void test_timer_start(void) {
     /*

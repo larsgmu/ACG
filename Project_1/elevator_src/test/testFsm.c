@@ -1,7 +1,7 @@
 #include "fsm.h"
 #include "unity.h"
 #include "elevator.h"
-#include "elevator_io_device.h"
+#include "elevator_io_types.h"
 
 extern Elevator elevator;
 extern int timerActive;
@@ -12,8 +12,8 @@ void setUp(void) { // This function is run between each test
         elevator.requests[floor][btn] = 0;
     }
   }
-
 }
+
 void tearDown(void) {}
 
 void test_fsm_onInitBetweenFloors(void) {

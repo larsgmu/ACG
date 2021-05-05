@@ -4,7 +4,7 @@
 #include "unity.h"
 #include "fsm.h"
 #include "elevator.h"
-#include "elevator_io_device.h"
+#include "elevator_io_types.h"
 
 /*=======External Functions This Runner Calls=====*/
 extern void setUp(void);
@@ -74,10 +74,10 @@ static void run_test(UnityTestFunction func, const char* name, UNITY_LINE_TYPE l
 int main(void)
 {
   UnityBegin("test/testFsm.c");
-  run_test(test_fsm_onInitBetweenFloors, "test_fsm_onInitBetweenFloors", 19);
-  run_test(test_fsm_onRequestButtonPress, "test_fsm_onRequestButtonPress", 28);
-  run_test(test_fsm_onFloorArrival, "test_fsm_onFloorArrival", 72);
-  run_test(test_fsm_onDoorTimeout, "test_fsm_onDoorTimeout", 108);
+  run_test(test_fsm_onInitBetweenFloors, "test_fsm_onInitBetweenFloors", 18);
+  run_test(test_fsm_onRequestButtonPress, "test_fsm_onRequestButtonPress", 27);
+  run_test(test_fsm_onFloorArrival, "test_fsm_onFloorArrival", 71);
+  run_test(test_fsm_onDoorTimeout, "test_fsm_onDoorTimeout", 107);
 
   return UnityEnd();
 }
