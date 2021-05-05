@@ -66,31 +66,6 @@ Elevator requests_clearAtCurrentFloor(Elevator e){
         }
         break;
 
-    case CV_InDirn:
-        e.requests[e.floor][B_Cab] = 0;
-        switch(e.dirn){
-        case D_Up:
-            e.requests[e.floor][B_HallUp] = 0;
-            if(!requests_above(e)){
-                e.requests[e.floor][B_HallDown] = 0;
-            }
-            break;
-
-        case D_Down:
-            e.requests[e.floor][B_HallDown] = 0;
-            if(!requests_below(e)){
-                e.requests[e.floor][B_HallUp] = 0;
-            }
-            break;
-
-        case D_Stop:
-        default:
-            e.requests[e.floor][B_HallUp] = 0;
-            e.requests[e.floor][B_HallDown] = 0;
-            break;
-        }
-        break;
-
     default:
         break;
     }
