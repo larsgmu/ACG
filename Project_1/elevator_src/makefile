@@ -72,7 +72,7 @@ test/test_runners/testRequests_Runner.c: test/testRequests.c
 	ruby $(UNITY_ROOT)/unity_scripts/generate_test_runner.rb test/testRequests.c  test/test_runners/testRequests_Runner.c
 test/test_runners/testTimer_Runner.c: test/testTimer.c
 	ruby $(UNITY_ROOT)/unity_scripts/generate_test_runner.rb test/testTimer.c  test/test_runners/testTimer_Runner.c
-test/test_runners/testTimer_Runner.c: test/testFsm.c
+test/test_runners/testFsm_Runner.c: test/testFsm.c
 	ruby $(UNITY_ROOT)/unity_scripts/generate_test_runner.rb test/testFsm.c  test/test_runners/testFsm_Runner.c
 
 

@@ -10,7 +10,7 @@ extern void setUp(void);
 extern void tearDown(void);
 extern void test_timer_start(void);
 extern void test_timer_stop(void);
-extern void test_timer_timed_out(void);
+extern void test_timer_timedOut(void);
 
 
 /*=======Mock Management=====*/
@@ -72,9 +72,9 @@ static void run_test(UnityTestFunction func, const char* name, UNITY_LINE_TYPE l
 int main(void)
 {
   UnityBegin("test/testTimer.c");
-  run_test(test_timer_start, "test_timer_start", 17);
-  run_test(test_timer_stop, "test_timer_stop", 35);
-  run_test(test_timer_timed_out, "test_timer_timed_out", 45);
+  run_test(test_timer_start, "test_timer_start", 12);
+  run_test(test_timer_stop, "test_timer_stop", 30);
+  run_test(test_timer_timedOut, "test_timer_timedOut", 40);
 
   return UnityEnd();
 }

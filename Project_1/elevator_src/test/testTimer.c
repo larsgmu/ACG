@@ -37,7 +37,7 @@ void test_timer_stop(void) {
 
 }
 
-void test_timer_timed_out(void) {
+void test_timer_timedOut(void) {
   /*
     This function checks if the timer is active and if it has
     exceeded timerEndTime it returns 1, else it returns 0.
